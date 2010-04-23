@@ -190,7 +190,8 @@ class Timeline(object):
                 sql_list.append('''%s = ?''' % k)
                 arg_list.append(v)
 
-        return conn_execute(self.conn, ('''select %s from aura where ''' % select_str) + ' and '.join(sql_list), tuple(arg_list))
+        #return conn_execute(self.conn, ('''select %s from aura where ''' % select_str) + ' and '.join(sql_list), tuple(arg_list))
+        return conn_execute(self.conn, ('''select %s from aura inner join (select id, time as start_time from event) as e1 on e1.id = aura.start_event_id inner join (select id, time as end_time from event) as e2 on e2.id = aura.end_event_id where ''' % select_str) + ' and '.join(sql_list), tuple(arg_list))
 
 
 class Region(object):
@@ -225,7 +226,7 @@ class Region(object):
             graph.render(draw, self)
             
         if self.label_str:
-            draw.text((self.getLeft() -95, self.getTop() + 3), self.label_str, font=ImageFont.load_default(), fill=css('text.regionTitle'))
+            draw.text((self.getLeft() -95, self.getTop() + 3), self.label_str.encode('utf8'), font=ImageFont.load_default(), fill=css('text.regionTitle'))
         if self.border:
             draw.line([(0, self.getBottom()), (self.getRight(), self.getBottom())], fill=css('region_border'))
 
