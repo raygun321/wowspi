@@ -83,7 +83,8 @@ def sqlite_connection(db_path):
     return conn
     
 def sqlite_insureColumns(conn, table_str, column_list):
-    col_set = set(conn_execute(conn, '''select * from %s limit 1''' % table_str).fetchone().keys())
+    #col_set = set(conn_execute(conn, '''select * from %s limit 1''' % table_str).fetchone().keys())
+    col_set = set( [tuple[1] for tuple in conn_execute(conn, '''PRAGMA table_info( %s )''' % table_str) ])
     
     for col_str, def_str in column_list:
         if col_str not in col_set:
